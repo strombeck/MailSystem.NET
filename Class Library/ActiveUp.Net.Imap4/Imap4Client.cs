@@ -1006,11 +1006,26 @@ namespace ActiveUp.Net.Mail
                     response = sr.ReadLine();
                     OnTcpRead(new TcpReadEventArgs(response));
 
-                    if (response.ToUpper().IndexOf("RECENT") > 0)
-                        OnNewMessageReceived(new NewMessageReceivedEventArgs(int.Parse(response.Split(' ')[1])));
 #if DEBUG
                     Console.WriteLine(response);
 #endif
+
+                    if (response != null)
+                    {
+                        var parts = response.Split(' ');
+                        // SPLIT something like "* 28 EXISTS" into its parts
+                        if (parts.Length > 2)
+                        {
+                            int countInt;
+                            if (!int.TryParse(parts[1], out countInt))
+                            {
+                                #if DEBUG
+                                    Console.WriteLine("Unparsable: {0}", response);
+                                #endif
+                            }
+                            OnNewMessageReceived(new NewMessageReceivedEventArgs(parts[2], int.Parse(parts[1])));
+                        }
+                    }
                 }
                 else
                 {
