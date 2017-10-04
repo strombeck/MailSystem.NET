@@ -1023,7 +1023,10 @@ namespace ActiveUp.Net.Mail
                                     Console.WriteLine("Unparsable: {0}", response);
                                 #endif
                             }
-                            OnNewMessageReceived(new NewMessageReceivedEventArgs(parts[2], int.Parse(parts[1])));
+                            else
+                            {
+                                OnNewMessageReceived(new NewMessageReceivedEventArgs(countInt));
+                            }
                         }
                     }
                 }
